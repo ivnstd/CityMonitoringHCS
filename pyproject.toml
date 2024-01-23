@@ -1,0 +1,33 @@
+[project]
+name = "citymonitoringhcs"
+version = "0.1.0"
+description = "City Monitoring of Housing and Communal Systems"
+authors = [
+    { name = "ivnstd", email = "nasty-iv@bk.ru" }
+]
+dependencies = [
+    "fastapi>=0.109.0",
+    "pydantic>=2.5.3",
+    "uvicorn>=0.27.0",
+    "ruff>=0.1.14",
+    "pyrogram>=2.0.106",
+]
+readme = "README.md"
+requires-python = ">=3.10"
+
+[project.scripts]
+hello = "citymonitoringhcs:hello"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.rye]
+managed = true
+dev-dependencies = []
+
+[tool.hatch.metadata]
+allow-direct-references = true
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/citymonitoringhcs"]
