@@ -12,3 +12,6 @@ wheels/
 
 # rye
 *.lock
+
+# ruff
+.ruff_cache
