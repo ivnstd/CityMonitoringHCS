@@ -6,14 +6,19 @@ authors = [
     { name = "ivnstd", email = "nasty-iv@bk.ru" }
 ]
 dependencies = [
-    "fastapi>=0.109.0",
-    "pydantic>=2.5.3",
+    "fastapi>=0.109.2",
+    "pydantic>=2.6.1",
     "uvicorn>=0.27.0",
     "ruff>=0.1.14",
     "pyrogram>=2.0.106",
+    "tgcrypto>=1.2.5",
+    "uvloop>=0.19.0",
+    "sqlalchemy>=2.0.25",
+    "python-dotenv>=1.0.1",
+    "psycopg2-binary>=2.9.9",
 ]
 readme = "README.md"
-requires-python = ">=3.10"
+requires-python = ">=3.10, <3.11"
 
 [project.scripts]
 hello = "citymonitoringhcs:hello"
@@ -30,4 +35,4 @@ dev-dependencies = []
 allow-direct-references = true
 
 [tool.hatch.build.targets.wheel]
-packages = ["src/citymonitoringhcs"]
+packages = ["src/nlp_service", "src/parser_service"]
