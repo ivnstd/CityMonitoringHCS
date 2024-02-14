@@ -19,24 +19,26 @@ class Message(BaseModel):
     date: datetime
     from_user: str
     text: Optional[str] = None
-    image_path: Optional[str] = None
+    image: Optional[bytes] = None
 
 
 async def download_image(app, message):
     try:
-        download_path = f"downloaded_images/{message.id}.jpg"
         photo = message.photo or (message.document and message.document.photo)
-        # Получение информации о медиа
         file_id = photo.file_id
-        file_path = await app.download_media(file_id, file_name=download_path)
-        return file_path
-    except:
-        # Сообщение не содежит фотографии
+        file_path = await app.download_media(file_id, file_name=f"downloaded_images/{message.id}.jpg")
+
+        with open(file_path, "rb") as file:
+            file_data = file.read()
+
+        return file_data
+    except Exception as e:
+        print(f"Failed to download image: {e}")
         return None
 
 
 async def process_message(app, message):
-    downloaded_file_path = await download_image(app, message)
+    downloaded_file_data = await download_image(app, message)
     text = message.caption if message.caption else message.text
     user = message.from_user.first_name if message.from_user else message.sender_chat.title
     return Message(
@@ -44,7 +46,7 @@ async def process_message(app, message):
         date=message.date,
         from_user=user,
         text=text,
-        image_path=downloaded_file_path
+        image=downloaded_file_data
     )
 
 
@@ -71,5 +73,4 @@ async def get_messages(last_message_id):
                 message_info = await process_message(app, message)
                 messages.append(message_info)
 
-            print(messages)
-            return messages
+        return messages

@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, DateTime
+from sqlalchemy import Column, Integer, String, DateTime, LargeBinary
 from sqlalchemy.ext.declarative import declarative_base
 from datetime import datetime
 
@@ -11,9 +11,4 @@ class Message(Base):
     date = Column(DateTime, default=datetime.utcnow)
     from_user = Column(String, index=True)
     text = Column(String, nullable=True)
-    image_path = Column(String, nullable=True)
-
-
-# from sqlalchemy import Column, Integer, String, DateTime, LargeBinary
-# ...
-#     image = Column(LargeBinary, nullable=True)
+    image = Column(LargeBinary, nullable=True)
