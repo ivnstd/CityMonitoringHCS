@@ -1,4 +1,4 @@
-from src.parser_service.app.api.database import engine
+from src.supervisor.app.api.database import engine
 from sqlalchemy.orm import sessionmaker
 
 

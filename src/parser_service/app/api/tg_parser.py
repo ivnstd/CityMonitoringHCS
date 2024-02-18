@@ -2,8 +2,10 @@ from pyrogram import Client
 from pydantic import BaseModel
 from typing import Optional
 from datetime import datetime
+# import uvloop
 
 import os
+import base64
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -19,7 +21,8 @@ class Message(BaseModel):
     date: datetime
     from_user: str
     text: Optional[str] = None
-    image: Optional[bytes] = None
+    image: Optional[str] = None
+    # image: Optional[bytes] = None
 
 
 async def download_image(app, message):
@@ -31,7 +34,10 @@ async def download_image(app, message):
         with open(file_path, "rb") as file:
             file_data = file.read()
 
-        return file_data
+        # Кодируем данные изображения в строку Base64
+        image_base64 = base64.b64encode(file_data).decode('utf-8')
+
+        return image_base64
     except Exception as e:
         print(f"Failed to download image: {e}")
         return None
@@ -74,3 +80,6 @@ async def get_messages(last_message_id):
                 messages.append(message_info)
 
         return messages
+
+# if __name__ == "__main__":
+#     uvloop.install()
