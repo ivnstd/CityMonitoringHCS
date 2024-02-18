@@ -1,7 +1,8 @@
-from bs4 import BeautifulSoup
-import httpx
 import asyncio
 import datetime
+import httpx
+from bs4 import BeautifulSoup
+
 
 SITE_URL = 'https://www.kvs-saratov.ru'
 START_URL = 'https://www.kvs-saratov.ru/news/operativnyy-monitoring/'
@@ -17,6 +18,7 @@ async def fetch_html(url, client):
     except httpx.HTTPStatusError as exc:
         print(f"HTTP error occurred while fetching {url}: {exc}")
 
+
 async def get_page(url, client):
     """ Извлечение контента со страницы """
     html = await fetch_html(url, client)
@@ -24,6 +26,7 @@ async def get_page(url, client):
 
 
 async def parse_page(url, client):
+    """ Парсинг одной страницы """
     page = await get_page(url, client)
 
     news_items = page.find_all('div', {'class': 'news_item'})
@@ -44,6 +47,7 @@ async def get_last_page_number(url, client):
 
 
 async def async_range(start, stop):
+    """ Асинхронный вариант range """
     for i in range(start, stop):
         yield i
         await asyncio.sleep(0)

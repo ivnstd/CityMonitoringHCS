@@ -1,10 +1,19 @@
+import os
 import httpx
-import asyncio
+from dotenv import load_dotenv
+
+
+load_dotenv()
+
+API_KEY = os.getenv("API_KEY")
+GEOCODE_ADDRESS_URL = "https://geocode-maps.yandex.ru/1.x"
+
 
 async def geocode(address):
-    GEOCODE_ADDRESS_URL = "https://geocode-maps.yandex.ru/1.x"
+    """ Геокодирование - получение координат объекта по его адресу """
+
     params = {
-        "apikey": "ff38a83a-f02f-47c8-9546-b021ff235e96",
+        "apikey": API_KEY,
         "geocode": address,
         "format": "json"
     }
@@ -23,4 +32,5 @@ async def geocode(address):
         # Возвращение координат
         return {"latitude": latitude, "longitude": longitude}
     except Exception as e:
-        raise {"Ошибка геокодирования": e}
+        print(f"Ошибка геокодирования {e}")
+        return None

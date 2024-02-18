@@ -7,7 +7,7 @@
             font-family: Arial, sans-serif;
             background-color: #f4f4f4;
             margin: 0;
-            padding: 0;
+            padding: 20px;
         }
         h1 {
             color: #333;
@@ -23,8 +23,8 @@
             background-color: #fff;
             border-radius: 5px;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-            margin: 10px;
-            padding: 10px;
+            margin: 10px 0;
+            padding: 20px;
         }
         a {
             color: #007bff;
@@ -41,7 +41,7 @@
         {% if messages %}
             {% for message in messages %}
             <li>
-                <a href="/messages/{{ message.id }}">{{ message.text }}</a>
+                <a href="/messages/{{ message.source }}/{{ message.local_id }}">{{ message.text }}</a>
             </li>
             {% endfor %}
         {% else %}

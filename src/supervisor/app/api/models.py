@@ -8,6 +8,8 @@ class Message(Base):
     __tablename__ = 'messages'
 
     id = Column(Integer, primary_key=True, index=True)
+    local_id = Column(Integer, index=True)
+    source = Column(String, index=True)
     date = Column(DateTime, default=datetime.utcnow)
     from_user = Column(String, index=True)
     text = Column(String, nullable=True)
