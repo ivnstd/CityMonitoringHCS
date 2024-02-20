@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Message and Image</title>
+    <title> {{ source }}:{{ id }} </title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -36,19 +36,22 @@
             border-radius: 5px;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
         }
+        .message-paragraph {
+            margin-top: 30px;
+            margin-bottom: 30px;
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Message</h1>
-        <p>Author: {{ author }}</p>
-        <p>Date: {{ date.strftime('%d.%m.%Y') }}</p>
-        <p>{{ message }}</p>
-        <h2>Image</h2>
+        <h1>Сообщение</h1>
+        <p>Отправитель: {{ author }}</p>
+        <p>Дата: {{ date.strftime('%d.%m.%Y') }}</p>
+        {% if message %}
+            <p class="message-paragraph">{{ message }}</p>
+        {% endif %}
         {% if image_url %}
             <img src="{{ image_url }}" alt="Image">
-        {% else %}
-            <p>{{ image_text }}</p>
         {% endif %}
     </div>
 </body>

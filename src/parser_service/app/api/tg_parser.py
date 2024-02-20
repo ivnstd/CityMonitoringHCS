@@ -1,11 +1,9 @@
 import base64
 import os
-from datetime import datetime
-from typing import Optional
-
 from dotenv import load_dotenv
-from pydantic import BaseModel
 from pyrogram import Client
+
+from src.supervisor.app.api.scheme import Message
 
 
 load_dotenv()
@@ -16,14 +14,6 @@ SESSION = os.getenv("SESSION")
 CHAT = os.getenv("CHAT")
 
 DIR_PATH = "downloaded_images"
-
-
-class Message(BaseModel):
-    id: int
-    date: datetime
-    from_user: str
-    text: Optional[str] = None
-    image: Optional[str] = None
 
 
 async def download_image(app, message):
@@ -52,6 +42,7 @@ async def process_message(app, message):
     user = message.from_user.first_name if message.from_user else message.sender_chat.title
     return Message(
         id=message.id,
+        source="tg",
         date=message.date,
         from_user=user,
         text=text,

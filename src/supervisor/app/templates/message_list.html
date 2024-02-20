@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Message List</title>
+    <title> {{ source }}:new </title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -36,7 +36,7 @@
     </style>
 </head>
 <body>
-    <h1>Message List</h1>
+    <h1>Сообщения</h1>
     <ul>
         {% if messages %}
             {% for message in messages %}
@@ -45,7 +45,7 @@
             </li>
             {% endfor %}
         {% else %}
-            <li>No new messages</li>
+            <li>Нет новых сообщений</li>
         {% endif %}
     </ul>
 </body>
