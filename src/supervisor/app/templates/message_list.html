@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title> {{ source }}:new </title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-top: 20px;
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+        }
+        li {
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            margin: 10px 0;
+            padding: 20px;
+        }
+        a {
+            color: #007bff;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <h1>Сообщения</h1>
+    <ul>
+        {% if messages %}
+            {% for message in messages %}
+            <li>
+                <a href="/messages/{{ message.source }}/{{ message.local_id }}">{{ message.text }}</a>
+            </li>
+            {% endfor %}
+        {% else %}
+            <li>Нет новых сообщений</li>
+        {% endif %}
+    </ul>
+</body>
+</html>
