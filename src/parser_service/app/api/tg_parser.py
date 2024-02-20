@@ -29,7 +29,7 @@ async def download_image(app, message):
         # Кодируем данные изображения в строку Base64
         image_base64 = base64.b64encode(file_data).decode('utf-8')
         return image_base64
-    except:
+    except Exception:
         return None
     finally:
         print(f"Сообщение TG:{message.id}")

@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import List
 
-from fastapi import FastAPI, Depends, HTTPException, BackgroundTasks, Request, Query
+from fastapi import FastAPI, Query
 
 from src.parser_service.app.api.tg_parser import get_messages as get_tg_messages, Message
 from src.parser_service.app.api.web_parser import get_messages as get_kvs_messages

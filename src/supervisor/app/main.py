@@ -1,11 +1,8 @@
 from datetime import datetime
-from typing import List
 
-import httpx
-from fastapi import FastAPI, BackgroundTasks, Request, Depends, HTTPException, Query
+from fastapi import FastAPI
 
 from src.supervisor.app.api import models, database
-from src.supervisor.app.api.geocoder import geocode
 from src.supervisor.app.routers.messages import router as messages_router
 
 

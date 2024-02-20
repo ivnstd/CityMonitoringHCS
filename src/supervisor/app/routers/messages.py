@@ -3,7 +3,7 @@ import io
 from typing import List
 
 import httpx
-from fastapi import APIRouter, BackgroundTasks, Request, Depends, HTTPException, Query
+from fastapi import APIRouter, Request, Depends, HTTPException
 from fastapi.responses import HTMLResponse, StreamingResponse
 from fastapi.templating import Jinja2Templates
 from sqlalchemy import func
