@@ -10,10 +10,12 @@ from sqlalchemy import func
 from sqlalchemy.orm import Session
 
 from src.supervisor.app.api import models, dependencies
-from src.supervisor.app.api.scheme import MessageDB
+from src.supervisor.app.api.scheme import MessageDB, MessagePlacemark
 
 
 PARSER_HOST = 'http://0.0.0.0:8001'
+NLP_HOST = 'http://0.0.0.0:8002'
+
 
 router = APIRouter()
 templates = Jinja2Templates(directory="src/supervisor/app/templates")
@@ -57,6 +59,36 @@ def parse_message(message):
         text=message.get("text"),
         image=decode_image(message.get("image"))
     )
+# ----------------------------------------------------------------------------------------------------------------------
+
+
+async def get_processing_message(text: str):
+    async with httpx.AsyncClient(timeout=httpx.Timeout(connect=10.0, read=300.0, write=100.0, pool=50.0)) as client:
+        url = f"{NLP_HOST}/processing"
+        params = {"message": text}
+        response = await client.get(url, params=params)
+        address_and_problem = response.json()
+    return address_and_problem
+
+
+async def get_geocoding_message(address: str):
+    async with httpx.AsyncClient(timeout=httpx.Timeout(connect=10.0, read=300.0, write=100.0, pool=50.0)) as client:
+        url = f"{NLP_HOST}/geocoding"
+        params = {"address": address}
+        response = await client.get(url, params=params)
+        address_and_coordinates = response.json()
+    return address_and_coordinates
+
+
+async def message_analysis(text):
+    address, problem, coordinates = None, None, None
+    if text:
+        address, problem = await get_processing_message(text)
+
+        if all([address, problem]):
+            address, coordinates = await get_geocoding_message(address)
+
+    return address, problem, coordinates
 
 # ----------------------------------------------------------------------------------------------------------------------
 
@@ -84,13 +116,18 @@ async def get_new_source_message_list(source: str, request: Request, db: Session
             if db_message:
                 continue
 
+            address, problem, coordinates = await message_analysis(message.text)
+
             # Создаем новую запись сообщения в базе данных
             db_message = models.Message(**dict(message))
             db.add(db_message)
+            db_message.address = address
+            db_message.problem = problem
+            db_message.coordinates = coordinates
             db.commit()
-        return templates.TemplateResponse("message_list.html", {"request": request,
-                                                                "source": source,
-                                                                "messages": messages})
+    return templates.TemplateResponse("message_list.html", {"request": request,
+                                                            "source": source,
+                                                            "messages": messages})
 
 
 @router.get("/messages/{source}/{local_id}", response_class=HTMLResponse)

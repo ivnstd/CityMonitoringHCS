@@ -25,3 +25,4 @@ try:
         print("Database connection successful")
 except OperationalError as e:
     print("Error connecting to database:", e)
+

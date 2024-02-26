@@ -19,3 +19,10 @@ class MessageDB(BaseModel):
     from_user: str
     text: Optional[str] = None
     image: Optional[bytes] = None
+
+
+class MessagePlacemark(MessageDB):
+    problem: str
+    address: str
+    coordinates: str
+
