@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title> {{ source }}:{{ id }} </title>
+    <title> {{ message.source }}:{{ message.local_id }} </title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -45,10 +45,13 @@
 <body>
     <div class="container">
         <h1>Сообщение</h1>
-        <p>Отправитель: {{ author }}</p>
-        <p>Дата: {{ date.strftime('%d.%m.%Y') }}</p>
-        {% if message %}
-            <p class="message-paragraph">{{ message }}</p>
+        <p>Отправитель: {{ message.from_user }}</p>
+        <p>Дата: {{ message.date.strftime('%d.%m.%Y') }}</p>
+        <p>Проблема: {{ message.problem }}</p>
+        <p>Адрес: {{ message.address }}</p>
+
+        {% if message.text %}
+            <p class="message-paragraph">{{ message.text }}</p>
         {% endif %}
         {% if image_url %}
             <img src="{{ image_url }}" alt="Image">

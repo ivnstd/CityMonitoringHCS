@@ -11,6 +11,7 @@ from sqlalchemy.orm import Session
 
 from src.supervisor.app.api import models, dependencies
 from src.supervisor.app.api.scheme import MessageDB, MessagePlacemark
+from src.supervisor.app.api.filters import is_from_administration, remove_duplicate_messages
 
 
 PARSER_HOST = 'http://0.0.0.0:8001'
@@ -28,6 +29,10 @@ async def get_last_message_id(source, db: Session = Depends(dependencies.get_db)
         .filter(models.Message.source == source)
         .scalar()
     )
+
+async def get_messages(source: str, db: Session = Depends(dependencies.get_db)):
+    """ Получение всех сообщений из базы данных по заданному ресурсу """
+    return db.query(models.Message).filter(models.Message.source == source).all()
 
 
 async def get_message(source, local_id, db: Session = Depends(dependencies.get_db)):
@@ -80,10 +85,14 @@ async def get_geocoding_message(address: str):
     return address_and_coordinates
 
 
-async def message_analysis(text):
+async def message_analysis(text, source):
     address, problem, coordinates = None, None, None
     if text:
-        address, problem = await get_processing_message(text)
+        if source == "kvs":
+            address = text
+            problem = "Водоснабжение"
+        else:
+            address, problem = await get_processing_message(text)
 
         if all([address, problem]):
             address, coordinates = await get_geocoding_message(address)
@@ -93,11 +102,12 @@ async def message_analysis(text):
 # ----------------------------------------------------------------------------------------------------------------------
 
 
-@router.get("/messages/{source}/new/", response_model=List[MessageDB], response_class=HTMLResponse)
+@router.get("/messages/{source}/new/", response_class=HTMLResponse)
 async def get_new_source_message_list(source: str, request: Request, db: Session = Depends(dependencies.get_db)):
     """ Получение еще новых сообщений, их запись в базу данных """
 
     last_message_id = await get_last_message_id(source, db)
+    meaningful_messages = []
 
     async with httpx.AsyncClient(timeout=httpx.Timeout(connect=10.0, read=300.0, write=100.0, pool=50.0)) as client:
         url = f"{PARSER_HOST}/messages/{source}/new/"
@@ -113,22 +123,43 @@ async def get_new_source_message_list(source: str, request: Request, db: Session
         for message in messages:
             # Пропускаем запись сообщения, если оно уже существует в базе данных
             db_message = await get_message(message.source, message.local_id, db)
-            if db_message:
+            if db_message or is_from_administration(message.from_user):
                 continue
 
-            address, problem, coordinates = await message_analysis(message.text)
+            address, problem, coordinates = await message_analysis(message.text, message.source)
+            if not all([address, problem, coordinates]):
+                continue
+
+            message = MessagePlacemark(**dict(message),
+                                              address=address,
+                                              problem=problem,
+                                              coordinates=coordinates)
+            meaningful_messages.append(message)
 
             # Создаем новую запись сообщения в базе данных
             db_message = models.Message(**dict(message))
+            # db_message = models.Message(**dict(message))
             db.add(db_message)
-            db_message.address = address
-            db_message.problem = problem
-            db_message.coordinates = coordinates
+            # db_message.address = address
+            # db_message.problem = problem
+            # db_message.coordinates = coordinates
             db.commit()
     return templates.TemplateResponse("message_list.html", {"request": request,
                                                             "source": source,
-                                                            "messages": messages})
+                                                            "category": "new",
+                                                            "messages": meaningful_messages})
 
+
+@router.get("/messages/{source}/", response_class=HTMLResponse)
+async def read_messages(source: str, request: Request, db: Session = Depends(dependencies.get_db)):
+    """ Получение информации о всех сообщениях с конкретного ресурса """
+    await remove_duplicate_messages(db)
+
+    messages = await get_messages(source, db)
+    return templates.TemplateResponse("message_list.html", {"request": request,
+                                                            "category": "all",
+                                                            "source": source,
+                                                            "messages": messages})
 
 @router.get("/messages/{source}/{local_id}", response_class=HTMLResponse)
 async def read_message(request: Request, source: str, local_id: int, db: Session = Depends(dependencies.get_db)):
@@ -142,11 +173,7 @@ async def read_message(request: Request, source: str, local_id: int, db: Session
 
     return templates.TemplateResponse("message.html",
                                       {"request": request,
-                                       "id": message.local_id,
-                                       "source": message.source,
-                                       "author": message.from_user,
-                                       "date": message.date,
-                                       "message": message.text,
+                                       "message": message,
                                        "image_url": image_url})
 
 
