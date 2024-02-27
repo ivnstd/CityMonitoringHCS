@@ -5,6 +5,7 @@ from fastapi import FastAPI
 from src.supervisor.app.api import models, database
 from src.supervisor.app.routers.messages import router as messages_router
 from src.supervisor.app.routers.processing import router as processing_router
+from src.supervisor.app.routers.map import router as map_router
 
 
 app = FastAPI()
@@ -29,3 +30,4 @@ async def shutdown_event():
 # ----------------------------------------------------------------------------------------------------------------------
 app.include_router(messages_router)
 app.include_router(processing_router)
+app.include_router(map_router)
