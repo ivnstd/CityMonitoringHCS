@@ -61,8 +61,8 @@ async def get_limit(app, last_message_id):
 
     # Вычисляем сколько сообщений необходимо спарсить, чтобы получить все новые сообщения
     limit = last_new_message_id - last_message_id
-    print("Последнее сообщение в чате:", last_new_message_id, "\nКоличество новых сообщений:", limit)
-    logger.info(f"Последнее сообщение в чате: {last_new_message_id}\nКоличество новых сообщений:{limit}")
+    logger.info(f"Последнее сообщение в чате: {last_new_message_id}")
+    logger.info(f"Количество новых сообщений:{limit}")
 
     return limit
 
