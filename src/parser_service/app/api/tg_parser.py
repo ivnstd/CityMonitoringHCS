@@ -4,6 +4,7 @@ from dotenv import load_dotenv
 from pyrogram import Client
 
 from src.supervisor.app.api.scheme import Message
+from src.parser_service.app.logger import logger
 
 
 load_dotenv()
@@ -31,8 +32,6 @@ async def download_image(app, message):
         return image_base64
     except Exception:
         return None
-    finally:
-        print(f"Сообщение TG:{message.id}")
 
 
 async def process_message(app, message):
@@ -40,6 +39,9 @@ async def process_message(app, message):
     downloaded_file_data = await download_image(app, message)
     text = message.caption if message.caption else message.text
     user = message.from_user.first_name if message.from_user else message.sender_chat.title
+
+    logger.info(f"Сообщение TG:{message.id}")
+
     return Message(
         id=message.id,
         source="tg",
@@ -53,12 +55,14 @@ async def process_message(app, message):
 async def get_limit(app, last_message_id):
     """ Определение колличества сообщений для парсинга """
     # Считывание из истории сообщений чата последнее сообщение, чтобы узнать его id
+    last_new_message_id = 0
     async for message in app.get_chat_history(CHAT, limit=1):
         last_new_message_id = message.id
 
     # Вычисляем сколько сообщений необходимо спарсить, чтобы получить все новые сообщения
     limit = last_new_message_id - last_message_id
-    print("Последнее сообщение в чате:", last_new_message_id, "\nКоличество новых сообщений:", limit)
+    logger.info(f"Последнее сообщение в чате: {last_new_message_id}")
+    logger.info(f"Количество новых сообщений:{limit}")
 
     return limit
 

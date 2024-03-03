@@ -7,14 +7,17 @@ load_dotenv()
 
 API_KEY = os.getenv("API_KEY")
 GEOCODE_ADDRESS_URL = "https://geocode-maps.yandex.ru/1.x"
+AREA = "51.36797765022104,45.439861987792945~51.71308855448513,46.57488701220701"
+CITY = "Саратов"
 
 
-async def geocode(address):
+async def geocoding(address):
     """ Геокодирование - получение координат объекта по его адресу """
 
     params = {
         "apikey": API_KEY,
-        "geocode": address,
+        "geocode": f"{CITY}, {address}",
+        "bbox": AREA,
         "format": "json"
     }
 
@@ -26,11 +29,11 @@ async def geocode(address):
 
         # Получение координат из ответа
         data = response.json()
-        coordinates = data["response"]["GeoObjectCollection"]["featureMember"][0]["GeoObject"]["Point"]["pos"]
-        latitude, longitude = map(float, coordinates.split())
+        feature_member = data["response"]["GeoObjectCollection"]["featureMember"][0]["GeoObject"]
+        coordinates = feature_member["Point"]["pos"]
+        full_address = feature_member["metaDataProperty"]["GeocoderMetaData"]["text"]
 
-        # Возвращение координат
-        return {"latitude": latitude, "longitude": longitude}
-    except Exception as e:
-        print(f"Ошибка геокодирования {e}")
-        return None
+        # Возвращение адреса и координат
+        return full_address, coordinates
+    except Exception:
+        return None, None

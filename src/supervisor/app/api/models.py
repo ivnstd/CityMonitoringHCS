@@ -14,3 +14,6 @@ class Message(Base):
     from_user = Column(String, index=True)
     text = Column(String, nullable=True)
     image = Column(LargeBinary, nullable=True)
+    problem = Column(String, nullable=True)
+    address = Column(String, nullable=True)
+    coordinates = Column(String, nullable=True)

@@ -22,6 +22,10 @@ dependencies = [
     "beautifulsoup4>=4.12.3",
     "httpx>=0.26.0",
     "py_mini_racer>=0.6.0",
+    "natasha>=1.6.0",
+    "pymorphy2>=0.9.1",
+    "setuptools>=69.1.0",
+    "colorlog>=6.8.2",
 ]
 readme = "README.md"
 requires-python = ">=3.10, <3.11"

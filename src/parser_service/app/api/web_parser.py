@@ -4,6 +4,7 @@ import httpx
 from bs4 import BeautifulSoup
 
 from src.supervisor.app.api.scheme import Message
+from src.parser_service.app.logger import logger
 
 
 SITE_URL = 'https://www.kvs-saratov.ru'
@@ -18,8 +19,8 @@ async def fetch_html(url, client):
         response = await client.get(url)
         response.raise_for_status()
         return response.content
-    except httpx.HTTPStatusError as exc:
-        print(f"HTTP error occurred while fetching {url}: {exc}")
+    except httpx.HTTPStatusError as e:
+        logger.error(f"Ошибка HTTP при получении {url}: {e}")
 
 
 async def get_page(url, client):
@@ -50,12 +51,13 @@ async def parse_page(url, last_message_id, client):
                 text=location,
                 image=None
             ))
-            print(f"Сообщение KVS:{id}")
+            logger.info(f"Сообщение KVS:{id}")
+
 
     # Если все спаршенные сообщения были новыми, парсинг нужно продолжить
     is_parsing_continue = len(messages_info_list) == len(news_items)
 
-    return (messages_info_list, is_parsing_continue)
+    return messages_info_list, is_parsing_continue
 
 
 async def get_last_page_number(url, client):

@@ -3,8 +3,11 @@ from typing import List
 
 from fastapi import FastAPI, Query
 
-from src.parser_service.app.api.tg_parser import get_messages as get_tg_messages, Message
+from src.supervisor.app.api.scheme import Message
+from src.parser_service.app.api.tg_parser import get_messages as get_tg_messages
 from src.parser_service.app.api.web_parser import get_messages as get_kvs_messages
+
+from src.parser_service.app.logger import logger
 
 
 app = FastAPI()
@@ -17,12 +20,12 @@ async def root():
 
 @app.on_event("startup")
 async def startup_event():
-    print('Server started :', datetime.now())
+    logger.info(f"Server started : {datetime.now()}")
 
 
 @app.on_event("shutdown")
 async def shutdown_event():
-    print('Server shutdown :', datetime.now())
+    logger.info(f"Server shutdown : {datetime.now()}")
 
 # ----------------------------------------------------------------------------------------------------------------------
 
