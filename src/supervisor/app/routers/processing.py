@@ -1,16 +1,10 @@
-import base64
-import io
-from typing import List
-
 import httpx
-from fastapi import APIRouter, Request, Depends, HTTPException
-from fastapi.responses import HTMLResponse, StreamingResponse
+from fastapi import APIRouter, Depends
+from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
-from sqlalchemy import func
 from sqlalchemy.orm import Session
 
 from src.supervisor.app.api import models, dependencies
-from src.supervisor.app.api.scheme import MessageDB
 
 
 NLP_HOST = 'http://0.0.0.0:8002'

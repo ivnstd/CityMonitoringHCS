@@ -25,6 +25,7 @@ dependencies = [
     "natasha>=1.6.0",
     "pymorphy2>=0.9.1",
     "setuptools>=69.1.0",
+    "colorlog>=6.8.2",
 ]
 readme = "README.md"
 requires-python = ">=3.10, <3.11"

@@ -1,7 +1,5 @@
 import base64
 import io
-from typing import List
-
 import httpx
 from fastapi import APIRouter, Request, Depends, HTTPException
 from fastapi.responses import HTMLResponse, StreamingResponse

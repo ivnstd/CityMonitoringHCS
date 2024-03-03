@@ -1,8 +1,10 @@
 from sqlalchemy import create_engine
 from sqlalchemy.exc import OperationalError
-
 import os
 from dotenv import load_dotenv
+
+from src.supervisor.app.logger import logger
+
 
 # Загрузка переменных окружения из файла .env
 load_dotenv()
@@ -22,7 +24,7 @@ try:
 
     # Проверка соединения с базой данных
     with engine.connect():
-        print("Database connection successful")
-except OperationalError as e:
-    print("Error connecting to database:", e)
+        logger.info("Database connection successful")
 
+except OperationalError as e:
+    logger.error(f"Error connecting to database: {e}")

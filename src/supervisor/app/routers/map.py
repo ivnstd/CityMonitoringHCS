@@ -1,16 +1,10 @@
-import base64
-import io
-from typing import List
-
-import httpx
 from fastapi import APIRouter, Request, Depends, HTTPException
-from fastapi.responses import HTMLResponse, StreamingResponse
+from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
-from sqlalchemy import func
 from sqlalchemy.orm import Session
 
 from src.supervisor.app.api import models, dependencies
-from src.supervisor.app.api.scheme import MessageDB, MessagePlacemark
+from src.supervisor.app.api.scheme import MessagePlacemark
 
 
 router = APIRouter()
@@ -41,6 +35,5 @@ async def map(request: Request, db: Session = Depends(dependencies.get_db)):
             "coordinates": message.coordinates
         }
         filtered_messages.append(filtered_message)
-    print(filtered_messages)
     return templates.TemplateResponse("map.html", {"request": request,
                                                    "messages": filtered_messages})

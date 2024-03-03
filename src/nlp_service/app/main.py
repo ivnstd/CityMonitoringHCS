@@ -3,11 +3,12 @@ from fastapi import FastAPI, Query
 
 from src.nlp_service.app.api.processing import processing
 from src.nlp_service.app.api.geocoder import geocoding
-from src.supervisor.app.api.scheme import MessageDB
-from typing import List
+
+from src.nlp_service.app.logger import logger
 
 
 app = FastAPI()
+# ----------------------------------------------------------------------------------------------------------------------
 
 
 @app.get("/")
@@ -16,12 +17,12 @@ async def root():
 
 @app.on_event("startup")
 async def startup_event():
-    print('Server started :', datetime.now())
+    logger.info(f"Server started : {datetime.now()}")
 
 
 @app.on_event("shutdown")
 async def shutdown_event():
-    print('Server shutdown :', datetime.now())
+    logger.info(f"Server shutdown : {datetime.now()}")
 
 # ----------------------------------------------------------------------------------------------------------------------
 
