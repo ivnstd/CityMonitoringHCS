@@ -2,6 +2,7 @@ from fastapi import APIRouter, Request, Depends, HTTPException
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 from sqlalchemy.orm import Session
+from datetime import datetime
 
 from src.supervisor.app.api import models, dependencies
 from src.supervisor.app.api.scheme import MessagePlacemark
@@ -30,6 +31,7 @@ async def map(request: Request, db: Session = Depends(dependencies.get_db)):
     filtered_messages = []
     for message in messages:
         filtered_message = {
+            "date": message.date.date().strftime("%d.%m.%Y"),
             "problem": message.problem,
             "address": message.address,
             "coordinates": message.coordinates

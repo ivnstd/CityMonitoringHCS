@@ -1,5 +1,6 @@
 from datetime import datetime
 from fastapi import FastAPI
+from fastapi.staticfiles import StaticFiles
 
 from src.supervisor.app.api import models, database
 from src.supervisor.app.routers.messages import router as messages_router
@@ -27,6 +28,11 @@ async def startup_event():
 @app.on_event("shutdown")
 async def shutdown_event():
     logger.info(f"Server shutdown : {datetime.now()}")
+
+
+
+# Директория статических файлов
+app.mount("/static", StaticFiles(directory="src/supervisor/app/static"), name="static")
 
 # ----------------------------------------------------------------------------------------------------------------------
 app.include_router(messages_router)

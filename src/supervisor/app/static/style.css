@@ -1,0 +1,88 @@
+/* карта */
+.map {
+    position: absolute;
+    left: 0.5%;
+    right: 25%;
+    top: 0.5%;
+    bottom: 0.5%;
+    background-color: #333;
+}
+
+/* блок с легендой карты */
+.legend {
+    position: absolute;
+    left: 76%;
+    right: 0.5%;
+    top: 0.5%;
+    bottom: 0.5%;
+    font-family: sans-serif;
+}
+
+/* оформление блоков текста на карточках легенды */
+p {
+    display:inline-block;
+    font-size: 18px;
+    font-weight: bold;
+    position: relative;
+    left: 10%;
+    bottom: 20%;
+
+}
+
+/* оформление картинок на карточках легенды */
+img {
+    position: relative;
+    left: 0;
+    top: 10%;
+    height: 80%;
+}
+
+/* Стили карточек */
+.card_1, .card_2, .card_3, .card_4, .card_all {
+    border-radius: 10px;
+    height: 15%;
+    width: 90%;
+    margin-bottom: 10px;
+    transition: transform 0.2s ease;
+    cursor: pointer;
+}
+
+.card_1 {
+    background-color: #4FAEEE;
+}
+
+.card_2 {
+    background-color: #EE4B68;
+}
+
+.card_3 {
+    background-color: #EEA849;
+}
+
+.card_4 {
+    background-color: #4CEB66;
+}
+
+.card_all {
+    background-color: #F8F8FF;
+    height: 5%;
+    width: 50%;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* При наведении на карточку - увеличение */
+.card_1:hover, .card_2:hover, .card_3:hover, .card_4:hover, .card_all:hover {
+    transform: scale(1.05);
+}
+
+/* Дополнительные стили для кнопок */
+button {
+    transition: transform 0.2s ease;
+    outline: none; /* уберем контур фокуса при клике на кнопки */
+}
+
+button:hover {
+    transform: scale(1.1);
+}
