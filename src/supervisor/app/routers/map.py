@@ -3,7 +3,7 @@ from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 from sqlalchemy.orm import Session
 from datetime import datetime
-
+import base64
 from src.supervisor.app.api import models, dependencies
 from src.supervisor.app.api.scheme import MessagePlacemark
 
@@ -30,12 +30,21 @@ async def map(request: Request, db: Session = Depends(dependencies.get_db)):
     messages = await get_data_messages(db)
     filtered_messages = []
     for message in messages:
+        date = message.date.date().strftime("%d.%m.%Y")
+
+        image = message.image
+        if image:
+            image_base64 = base64.b64encode(image).decode('utf-8')
+            image = f'data:image;base64,{image_base64}'
+
         filtered_message = {
-            "date": message.date.date().strftime("%d.%m.%Y"),
+            "date": date,
             "problem": message.problem,
             "address": message.address,
-            "coordinates": message.coordinates
+            "coordinates": message.coordinates,
+            "image": image
         }
         filtered_messages.append(filtered_message)
+
     return templates.TemplateResponse("map.html", {"request": request,
                                                    "messages": filtered_messages})

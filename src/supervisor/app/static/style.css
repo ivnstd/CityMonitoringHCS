@@ -18,29 +18,19 @@
     font-family: sans-serif;
 }
 
-/* оформление блоков текста на карточках легенды */
-p {
-    display:inline-block;
-    font-size: 18px;
-    font-weight: bold;
-    position: relative;
-    left: 10%;
-    bottom: 20%;
-
-}
-
 /* оформление картинок на карточках легенды */
 img {
-    position: relative;
-    left: 0;
+    position: absolute;
+    left: 5%;
     top: 10%;
     height: 80%;
 }
 
 /* Стили карточек */
 .card_1, .card_2, .card_3, .card_4, .card_all {
+    position: relative;
     border-radius: 10px;
-    height: 15%;
+    height: 10%;
     width: 90%;
     margin-bottom: 10px;
     transition: transform 0.2s ease;
@@ -66,10 +56,11 @@ img {
 .card_all {
     background-color: #F8F8FF;
     height: 5%;
-    width: 50%;
+    width: 35%;
     display: block;
     margin-left: auto;
     margin-right: auto;
+    text-align: center;
 }
 
 /* При наведении на карточку - увеличение */
@@ -85,4 +76,20 @@ button {
 
 button:hover {
     transform: scale(1.1);
+}
+
+/* оформление блоков текста на карточках легенды */
+p {
+    display:inline-block;
+    font-size: 15px;
+    font-weight: bold;
+    position: relative;
+    margin-left: 120px;
+    bottom: 20%;
+}
+
+p.card_all {
+    margin-left: 0px;
+    weight: 100%;
+    white-space: nowrap;
 }
