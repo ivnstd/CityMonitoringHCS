@@ -3,8 +3,8 @@ from datetime import datetime
 import httpx
 from bs4 import BeautifulSoup
 
-from src.supervisor.app.api.scheme import Message
-from src.parser_service.app.logger import logger
+from .scheme import Message
+from .logger import logger
 
 
 SITE_URL = 'https://www.kvs-saratov.ru'

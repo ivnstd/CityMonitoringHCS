@@ -1,0 +1,21 @@
+version: '3'
+
+services:
+  text_processing:
+    container_name: nlp_service
+    build: src/nlp_service
+    environment:
+      API_KEY: ${API_KEY}
+    ports:
+      - "8002:8000"
+  parser:
+    container_name: parser_service
+    build: src/parser_service
+    environment:
+      API_ID: ${API_ID}
+      API_HASH: ${API_HASH}
+      SESSION: ${SESSION}
+      CHAT: ${CHAT}
+      SESSION_STRING: ${SESSION_STRING}
+    ports:
+      - "8001:8000"

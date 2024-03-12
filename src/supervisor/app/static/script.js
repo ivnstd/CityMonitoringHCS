@@ -58,8 +58,7 @@ function showMarkers(data = DATA) {
 
 		let image = ''
 		if (message.image) {
-			image = '<img src="https://sandbox.api.maps.yandex.net/examples/ru/2.1/balloon_html/img/cinema.jpg" height="400">';
-//			image = '<img src="' + message.image + '" height="400">';
+			image = '<img src="' + message.image + '" height="400">';
 		}
 
 		// Создание и добавление метки в кластер

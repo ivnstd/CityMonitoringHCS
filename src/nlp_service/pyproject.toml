@@ -1,0 +1,38 @@
+[project]
+name = "nlp-service"
+version = "0.1.0"
+description = "Add your description here"
+authors = [
+    { name = "ivnstd", email = "nasty-iv@bk.ru" }
+]
+dependencies = [
+    "fastapi>=0.109.2",
+    "pydantic>=2.6.1",
+    "uvicorn>=0.27.0",
+    "ruff>=0.1.14",
+    "python-dotenv>=1.0.1",
+    "psycopg2-binary>=2.9.9",
+    "pip>=24.0",
+    "ipdb>=0.13.13",
+    "httpx>=0.26.0",
+    "natasha>=1.6.0",
+    "pymorphy2>=0.9.1",
+    "setuptools>=69.1.0",
+    "colorlog>=6.8.2",
+]
+readme = "README.md"
+requires-python = ">= 3.10, <3.11"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.rye]
+managed = true
+dev-dependencies = []
+
+[tool.hatch.metadata]
+allow-direct-references = true
+
+[tool.hatch.build.targets.wheel]
+packages = ["app"]

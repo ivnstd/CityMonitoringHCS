@@ -1,10 +1,9 @@
 from datetime import datetime
 from fastapi import FastAPI, Query
 
-from src.nlp_service.app.api.processing import processing
-from src.nlp_service.app.api.geocoder import geocoding
-
-from src.nlp_service.app.logger import logger
+from api.processing import processing
+from api.geocoder import geocoding
+from api.logger import logger
 
 
 app = FastAPI()
@@ -18,6 +17,7 @@ async def root():
 @app.on_event("startup")
 async def startup_event():
     logger.info(f"Server started : {datetime.now()}")
+    logger.info(f"Uvicorn running in docker on : http://0.0.0.0:8002")
 
 
 @app.on_event("shutdown")
@@ -35,3 +35,8 @@ async def processing_message(message: str = Query(...)):
 @app.get("/geocoding")
 async def geocoding_message(address: str = Query(...)):
     return await geocoding(address)
+
+
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, port=8002, reload=True)
