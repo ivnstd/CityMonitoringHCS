@@ -2,16 +2,17 @@ from datetime import datetime
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 
-from src.supervisor.app.api import models, database
-from src.supervisor.app.routers.messages import router as messages_router
-from src.supervisor.app.routers.processing import router as processing_router
-from src.supervisor.app.routers.map import router as map_router
+from api import models, database
+from routers.messages import router as messages_router
+from routers.processing import router as processing_router
+from routers.map import router as map_router
 
-from src.supervisor.app.logger import logger
+from api.logger import logger
 
 
 app = FastAPI()
 models.Base.metadata.create_all(bind=database.engine)
+
 # ----------------------------------------------------------------------------------------------------------------------
 
 
@@ -32,7 +33,7 @@ async def shutdown_event():
 
 
 # Директория статических файлов
-app.mount("/static", StaticFiles(directory="src/supervisor/app/static"), name="static")
+app.mount("/static", StaticFiles(directory="app/static"), name="static")
 
 # ----------------------------------------------------------------------------------------------------------------------
 app.include_router(messages_router)

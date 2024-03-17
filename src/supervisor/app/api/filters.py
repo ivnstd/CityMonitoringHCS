@@ -1,7 +1,7 @@
 from fastapi import Depends
 from sqlalchemy import func
 from sqlalchemy.orm import Session
-from src.supervisor.app.api import models, dependencies
+from . import models, dependencies
 
 
 def is_from_administration(from_user):

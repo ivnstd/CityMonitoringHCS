@@ -7,9 +7,9 @@ from fastapi.templating import Jinja2Templates
 from sqlalchemy import func
 from sqlalchemy.orm import Session
 
-from src.supervisor.app.api import models, dependencies
-from src.supervisor.app.api.scheme import MessageDB, MessagePlacemark
-from src.supervisor.app.api.filters import is_from_administration, remove_duplicate_messages
+from app.api import models, dependencies
+from app.api.scheme import MessageDB, MessagePlacemark
+from app.api.filters import is_from_administration, remove_duplicate_messages
 
 
 PARSER_HOST = 'http://0.0.0.0:8001'
@@ -17,7 +17,7 @@ NLP_HOST = 'http://0.0.0.0:8002'
 
 
 router = APIRouter()
-templates = Jinja2Templates(directory="src/supervisor/app/templates")
+templates = Jinja2Templates(directory="app/templates")
 
 # ----------------------------------------------------------------------------------------------------------------------
 async def get_last_message_id(source, db: Session = Depends(dependencies.get_db)):

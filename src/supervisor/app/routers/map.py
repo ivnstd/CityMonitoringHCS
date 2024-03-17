@@ -2,14 +2,14 @@ from fastapi import APIRouter, Request, Depends, HTTPException
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 from sqlalchemy.orm import Session
-from datetime import datetime
+
 import base64
-from src.supervisor.app.api import models, dependencies
-from src.supervisor.app.api.scheme import MessagePlacemark
+from app.api import models, dependencies
+from app.api.scheme import MessagePlacemark
 
 
 router = APIRouter()
-templates = Jinja2Templates(directory="src/supervisor/app/templates")
+templates = Jinja2Templates(directory="app/templates")
 
 
 async def get_data_messages(db: Session = Depends(dependencies.get_db)):

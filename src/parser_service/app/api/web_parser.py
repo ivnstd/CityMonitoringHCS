@@ -75,7 +75,7 @@ async def async_range(start, stop):
         await asyncio.sleep(0)
 
 
-async def get_messages(last_message_id):
+async def get_messages(last_message_id=32350):
     async with httpx.AsyncClient() as client:
         max_page_number = await get_last_page_number(START_URL, client)
 

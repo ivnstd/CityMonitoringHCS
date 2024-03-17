@@ -1,13 +1,6 @@
 version: '3'
 
 services:
-  text_processing:
-    container_name: nlp_service
-    build: src/nlp_service
-    environment:
-      API_KEY: ${API_KEY}
-    ports:
-      - "8002:8000"
   parser:
     container_name: parser_service
     build: src/parser_service
@@ -19,3 +12,45 @@ services:
       SESSION_STRING: ${SESSION_STRING}
     ports:
       - "8001:8000"
+
+  text_processing:
+    container_name: nlp_service
+    build: src/nlp_service
+    environment:
+      API_KEY: ${API_KEY}
+    ports:
+      - "8002:8000"
+
+  db:
+    build: src/postgres
+    container_name: db
+    image: postgres:latest
+    restart: always
+    environment:
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  supervisor:
+    container_name: supervisor
+    build: src/supervisor
+    environment:
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_HOST: 172.17.0.1
+      DB_PORT: ${DB_PORT}
+      DB_NAME: ${DB_NAME}
+    network_mode: host
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  postgres_data:
