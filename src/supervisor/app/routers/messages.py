@@ -7,9 +7,9 @@ from fastapi.templating import Jinja2Templates
 from sqlalchemy import func
 from sqlalchemy.orm import Session
 
-from src.supervisor.app.api import models, dependencies
-from src.supervisor.app.api.scheme import MessageDB, MessagePlacemark
-from src.supervisor.app.api.filters import is_from_administration, remove_duplicate_messages
+from app.api import models, dependencies
+from app.api.scheme import MessageDB, MessagePlacemark
+from app.api.filters import is_from_administration, remove_duplicate_messages
 
 
 PARSER_HOST = 'http://0.0.0.0:8001'
@@ -17,9 +17,10 @@ NLP_HOST = 'http://0.0.0.0:8002'
 
 
 router = APIRouter()
-templates = Jinja2Templates(directory="src/supervisor/app/templates")
-
+templates = Jinja2Templates(directory="app/templates")
 # ----------------------------------------------------------------------------------------------------------------------
+
+
 async def get_last_message_id(source, db: Session = Depends(dependencies.get_db)):
     """ Определение идентификатора последнего полученного сообщения """
     return (
@@ -27,6 +28,7 @@ async def get_last_message_id(source, db: Session = Depends(dependencies.get_db)
         .filter(models.Message.source == source)
         .scalar()
     )
+
 
 async def get_messages(source: str, db: Session = Depends(dependencies.get_db)):
     """ Получение всех сообщений из базы данных по заданному ресурсу """
@@ -96,7 +98,6 @@ async def message_analysis(text, source):
             address, coordinates = await get_geocoding_message(address)
 
     return address, problem, coordinates
-
 # ----------------------------------------------------------------------------------------------------------------------
 
 
@@ -158,6 +159,7 @@ async def read_messages(source: str, request: Request, db: Session = Depends(dep
                                                             "category": "all",
                                                             "source": source,
                                                             "messages": messages})
+
 
 @router.get("/messages/{source}/{local_id}", response_class=HTMLResponse)
 async def read_message(request: Request, source: str, local_id: int, db: Session = Depends(dependencies.get_db)):

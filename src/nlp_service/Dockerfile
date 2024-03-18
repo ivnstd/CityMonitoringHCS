@@ -1,4 +1,3 @@
-FROM ubuntu:latest
-LABEL authors="user"
+FROM citymonitoringhcs_text_processing:latest
 
-ENTRYPOINT ["top", "-b"]
+COPY app app

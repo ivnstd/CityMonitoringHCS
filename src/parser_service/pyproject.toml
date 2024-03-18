@@ -1,0 +1,40 @@
+[project]
+name = "parser-service"
+version = "0.1.0"
+description = "Add your description here"
+authors = [
+    { name = "ivnstd", email = "nasty-iv@bk.ru" }
+]
+dependencies = [
+    "fastapi>=0.109.2",
+    "pydantic>=2.6.1",
+    "uvicorn>=0.27.0",
+    "ruff>=0.1.14",
+    "pyrogram>=2.0.106",
+    "tgcrypto>=1.2.5",
+    "uvloop>=0.19.0",
+    "python-dotenv>=1.0.1",
+    "psycopg2-binary>=2.9.9",
+    "pip>=24.0",
+    "ipdb>=0.13.13",
+    "beautifulsoup4>=4.12.3",
+    "httpx>=0.26.0",
+    "setuptools>=69.1.0",
+    "colorlog>=6.8.2",
+]
+readme = "README.md"
+requires-python = ">= 3.10, <3.11"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.rye]
+managed = true
+dev-dependencies = []
+
+[tool.hatch.metadata]
+allow-direct-references = true
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/parser_service"]

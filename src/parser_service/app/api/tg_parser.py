@@ -3,8 +3,8 @@ import os
 from dotenv import load_dotenv
 from pyrogram import Client
 
-from src.supervisor.app.api.scheme import Message
-from src.parser_service.app.logger import logger
+from .scheme import Message
+from .logger import logger
 
 
 load_dotenv()
@@ -13,6 +13,7 @@ API_ID = os.getenv("API_ID")
 API_HASH = os.getenv("API_HASH")
 SESSION = os.getenv("SESSION")
 CHAT = os.getenv("CHAT")
+SESSION_STRING = os.getenv("SESSION_STRING")
 
 DIR_PATH = "downloaded_images"
 
@@ -67,9 +68,9 @@ async def get_limit(app, last_message_id):
     return limit
 
 
-async def get_messages(last_message_id):
+async def get_messages(last_message_id=123400):
     """ Парсинг новых сообщений """
-    app = Client("CM_HCS_account", api_id=API_ID, api_hash=API_HASH, phone_number=SESSION)
+    app = Client("CM_HCS_account", api_id=API_ID, api_hash=API_HASH, phone_number=SESSION, in_memory=True, session_string=SESSION_STRING)
     async with app:
         limit = await get_limit(app, last_message_id)
 

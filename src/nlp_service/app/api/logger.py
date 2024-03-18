@@ -4,7 +4,7 @@ from colorlog import ColoredFormatter
 
 # Настройки цветов для уровней логирования
 formatter = ColoredFormatter(
-    "%(log_color)s%(levelname)s%(reset)s:     [%(name)s] %(message)s",
+    "%(log_color)s%(levelname)-9s%(reset)s %(message)s",
     datefmt=None,
     reset=True,
     log_colors={
@@ -19,7 +19,7 @@ formatter = ColoredFormatter(
 )
 
 # Создание логгера
-logger = logging.getLogger("parser_service")
+logger = logging.getLogger("nlp_service")
 logger.setLevel(logging.DEBUG)
 
 # Поток для вывода

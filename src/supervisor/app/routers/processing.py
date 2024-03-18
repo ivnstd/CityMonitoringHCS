@@ -4,13 +4,14 @@ from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 from sqlalchemy.orm import Session
 
-from src.supervisor.app.api import models, dependencies
+from app.api import models, dependencies
 
 
 NLP_HOST = 'http://0.0.0.0:8002'
 
 router = APIRouter()
-templates = Jinja2Templates(directory="src/supervisor/app/templates")
+templates = Jinja2Templates(directory="app/templates")
+# ----------------------------------------------------------------------------------------------------------------------
 
 
 async def get_message(source, local_id, db: Session = Depends(dependencies.get_db)):

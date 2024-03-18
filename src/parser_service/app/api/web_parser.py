@@ -3,14 +3,13 @@ from datetime import datetime
 import httpx
 from bs4 import BeautifulSoup
 
-from src.supervisor.app.api.scheme import Message
-from src.parser_service.app.logger import logger
+from .scheme import Message
+from .logger import logger
 
 
 SITE_URL = 'https://www.kvs-saratov.ru'
 START_URL = 'https://www.kvs-saratov.ru/news/operativnyy-monitoring/'
 PAGE_URL = 'https://www.kvs-saratov.ru/news/operativnyy-monitoring/18443?PAGEN_1='
-
 
 
 async def fetch_html(url, client):
@@ -53,7 +52,6 @@ async def parse_page(url, last_message_id, client):
             ))
             logger.info(f"Сообщение KVS:{id}")
 
-
     # Если все спаршенные сообщения были новыми, парсинг нужно продолжить
     is_parsing_continue = len(messages_info_list) == len(news_items)
 
@@ -75,7 +73,7 @@ async def async_range(start, stop):
         await asyncio.sleep(0)
 
 
-async def get_messages(last_message_id):
+async def get_messages(last_message_id=32350):
     async with httpx.AsyncClient() as client:
         max_page_number = await get_last_page_number(START_URL, client)
 

@@ -5,178 +5,39 @@
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Коммунальные проблемы Саратовской области</title>
-	<style>
-		/* карта */
-		.map {
-			position: absolute;
-			left: 0.5%;
-			right: 25%;
-			top: 0.5%;
-			bottom: 0.5%;
-			background-color: #333;
-		}
-
-		/* блок с легендой карты */
-		.legend {
-			position: absolute;
-			left: 76%;
-			right: 0.5%;
-			top: 0.5%;
-			bottom: 0.5%;
-			font-family: sans-serif;
-		}
-
-		/* оформление блоков текста на карточках легенды */
-		p {
-			display:inline-block;
-			font-size: 18px;
-			font-weight: bold;
-			position: relative;
-			left: 10%;
-			bottom: 20%;
-		}
-
-		/* оформление картинок на карточках легенды */
-		img {
-			position: relative;
-			left: 3%;
-			top: 10%;
-			height: 80%;
-		}
-
-		/* карточка "ВодоснабжениеВ */
-		.card_1 {
-			background-color: #4FAEEE;
-			border-radius: 10px;
-			position: relative;
-			top: 5%;
-			height: 15%;
-		}
-
-		/* Теплоснабжение и горячее водоснабжение */
-		.card_2 {
-			background-color: #EE4B68;
-			border-radius: 10px;
-			position: relative;
-			top: 6%;
-			height: 15%;
-		}
-
-		/* карточка "Электроснабжение */
-		.card_3 {
-			background-color: #EEA849;
-			border-radius: 10px;
-			position: relative;
-			top: 7%;
-			height: 15%;
-		}
-
-		/* карточка "Дорожное хозяйство */
-		.card_4 {
-			background-color: #4CEB66;
-			border-radius: 10px;
-			position: relative;
-			top: 8%;
-			height: 15%;
-		}
-	</style>
+	<link rel="stylesheet" type="text/css" href="/static/style.css">
 </head>
 <body>
 	<main>
 		<div id="map" class="map"></div>
 		<div class="legend">
 			<h2> Жилищно-коммунальные проблемы Саратовской обл. </h2>
-			<div class="card_1">
-				<img src="https://www.svgrepo.com/show/59037/plumber-tap.svg">
-<!--				<img src="src/supervisor/app/templates/img/water_supply.png">-->
+			<button class="card_1" onclick="filterMarkers('Водоснабжение')">
+				<img src="/static/water_supply.png">
 				<p> Водоснабжение </p>
-			</div>
-			<div class="card_2">
-				<img src="https://www.svgrepo.com/show/59037/plumber-tap.svg">
-<!--				<img src="src/supervisor/app/templates/img/heat_supply.png">-->
-				<p> Теплоснабжение и <br> горячее водоснабжение </p>
-			</div>
-			<div class="card_3">
-				<img src="https://www.svgrepo.com/show/59037/plumber-tap.svg">
-<!--				<img src="src/supervisor/app/templates/img/electricity_supply.png">-->
+			</button>
+			<button class="card_2" onclick="filterMarkers('Теплоснабжение')">
+				<img src="/static/heat_supply.png">
+				<p> Теплоснабжение и горячее водоснабжение </p>
+			</button>
+			<button class="card_3" onclick="filterMarkers('Электроснабжение')">
+				<img src="/static/electricity_supply.png">
 				<p> Электроснабжение </p>
-			</div>
-			<div class="card_4">
-				<img src="https://www.svgrepo.com/show/59037/plumber-tap.svg">
-<!--				<img src="src/supervisor/app/templates/img/road_infrastructure.png">-->
+			</button>
+			<button class="card_4" onclick="filterMarkers('Дорожное хозяйство')">
+				<img src="/static/road_infrastructure.png">
 				<p> Дорожное хозяйство </p>
-			</div>
+			</button>
+			<button class="card_all" onclick="showMarkers()">
+				<p class="card_all"> Показать все </p>
+			</button>
 		</div>
 	</main>
 	<script src="https://api-maps.yandex.ru/2.1/?apikey=04115428-c44a-47da-8e64-57b42eaddda3&lang=ru_RU"></script>
-<!--	<script src="src/supervisor/app/templates/script.js"></script>-->
+	<script src="/static/script.js"></script>
 	<script>
-		ymaps.ready(init);
-
-		var map;
-		let area = [[51.36797765022104,45.439861987792945], [51.71308855448513,46.57488701220701]];
-		let center = [51.533562, 46.034266];
-		let zoom = 13;
-
-		// Функция инициализации карты
-		function init() {
-			// Создание экземпляра карты и его привязка к контейнеру с заданным id
-			map = new ymaps.Map('map', {
-				center: center,
-				zoom: zoom
-			}, {
-				// Зададим ограниченную область прямоугольником, примерно описывающим город
-				restrictMapArea: area
-			}),
-			clusterer = new ymaps.Clusterer({
-				// Макет метки кластера pieChart
-				clusterIconLayout: 'default#pieChart',
-				// Радиус диаграммы в пикселях
-				clusterIconPieChartRadius: 20,
-				// Радиус центральной части макета
-				clusterIconPieChartCoreRadius: 10,
-				// Ширина линий-разделителей секторов и внешней обводки диаграммы
-				clusterIconPieChartStrokeWidth: 2,
-				// Определяет наличие поля balloon
-				hasBalloon: true
-			});
-			const data = {{ messages|tojson|safe }};
-			if (data) {
-				data.forEach(message => {
-					// Используем данные каждого сообщения для отображения проблемы на карте
-					// Определение цвета метки по соответствующему тегу проблемы
-					switch (message.problem) {
-						case 'Водоснабжение':
-							var color = '#4FAEEE';
-							break;
-						case 'Теплоснабжение':
-							var color = '#EE4B68';
-							break;
-						case 'Электроснабжение':
-							var color = '#EEA849';
-							break;
-						case 'Дорожное хозяйство':
-							var color = '#4CEB66';
-							break;
-						default:
-							var color = '#808080';
-							break;
-					}
-					// Преобразование координат в формат [широта, долгота]
-    				const [latitude, longitude] = message.coordinates.split(' ').map(parseFloat);
-					// Создание и добавление метки в кластер
-					clusterer.add(new ymaps.Placemark([longitude, latitude], {
-						balloonContentHeader: message.problem,
-						balloonContentBody: message.address
-					}, {
-						preset: 'islands#dotIcon',
-						iconColor: color
-					}));
-				});
-			}
-			map.geoObjects.add(clusterer);         // вывод кластеров с геообъектами
-			map.controls.remove('trafficControl'); // удаляем контроль трафика
-		}
+        const messages = {{ messages|tojson|safe }};
+		run_map(messages);
 	</script>
 </body>
 </html>

@@ -3,7 +3,7 @@ from sqlalchemy.exc import OperationalError
 import os
 from dotenv import load_dotenv
 
-from src.supervisor.app.logger import logger
+from .logger import logger
 
 
 # Загрузка переменных окружения из файла .env
@@ -16,7 +16,7 @@ DB_HOST = os.getenv("DB_HOST")
 DB_PORT = os.getenv("DB_PORT")
 DB_NAME = os.getenv("DB_NAME")
 
-SQLALCHEMY_DATABASE_URL = f"postgresql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
+SQLALCHEMY_DATABASE_URL = f"postgresql+psycopg2://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
 
 try:
     # Создание объекта движка SQLAlchemy

@@ -4,7 +4,7 @@ from colorlog import ColoredFormatter
 
 # Настройки цветов для уровней логирования
 formatter = ColoredFormatter(
-    "%(log_color)s%(levelname)s%(reset)s:     [%(name)s] %(message)s",
+    "%(log_color)s%(levelname)-9s%(reset)s %(message)s",
     datefmt=None,
     reset=True,
     log_colors={
@@ -19,7 +19,7 @@ formatter = ColoredFormatter(
 )
 
 # Создание логгера
-logger = logging.getLogger("supervisor")
+logger = logging.getLogger("parser_service")
 logger.setLevel(logging.DEBUG)
 
 # Поток для вывода
@@ -28,10 +28,3 @@ stream_handler.setFormatter(formatter)
 
 # Добавление потока в логгер
 logger.addHandler(stream_handler)
-
-# # Примеры логирования с разными уровнями
-# logger.debug("This is a debug message")
-# logger.info("This is an info message")
-# logger.warning("This is a warning message")
-# logger.error("This is an error message")
-# logger.critical("This is a critical message")
