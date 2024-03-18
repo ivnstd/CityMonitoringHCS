@@ -10,6 +10,7 @@ from api.logger import logger
 
 
 app = FastAPI()
+# ----------------------------------------------------------------------------------------------------------------------
 
 
 @app.get("/")
@@ -20,7 +21,7 @@ async def root():
 @app.on_event("startup")
 async def startup_event():
     logger.info(f"Server started : {datetime.now()}")
-    logger.info(f"Uvicorn running in docker on : http://0.0.0.0:8001")
+    logger.info("Uvicorn running in docker on : http://0.0.0.0:8001")
 
 
 @app.on_event("shutdown")

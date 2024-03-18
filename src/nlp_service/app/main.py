@@ -14,10 +14,11 @@ app = FastAPI()
 async def root():
     return {"message": "NLP-service"}
 
+
 @app.on_event("startup")
 async def startup_event():
     logger.info(f"Server started : {datetime.now()}")
-    logger.info(f"Uvicorn running in docker on : http://0.0.0.0:8002")
+    logger.info("Uvicorn running in docker on : http://0.0.0.0:8002")
 
 
 @app.on_event("shutdown")

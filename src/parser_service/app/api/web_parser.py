@@ -12,7 +12,6 @@ START_URL = 'https://www.kvs-saratov.ru/news/operativnyy-monitoring/'
 PAGE_URL = 'https://www.kvs-saratov.ru/news/operativnyy-monitoring/18443?PAGEN_1='
 
 
-
 async def fetch_html(url, client):
     """ Получение HTML-кода страницы по заданному URL """
     try:
@@ -52,7 +51,6 @@ async def parse_page(url, last_message_id, client):
                 image=None
             ))
             logger.info(f"Сообщение KVS:{id}")
-
 
     # Если все спаршенные сообщения были новыми, парсинг нужно продолжить
     is_parsing_continue = len(messages_info_list) == len(news_items)

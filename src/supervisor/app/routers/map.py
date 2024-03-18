@@ -10,6 +10,7 @@ from app.api.scheme import MessagePlacemark
 
 router = APIRouter()
 templates = Jinja2Templates(directory="app/templates")
+# ----------------------------------------------------------------------------------------------------------------------
 
 
 async def get_data_messages(db: Session = Depends(dependencies.get_db)):

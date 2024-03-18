@@ -11,6 +11,7 @@ NLP_HOST = 'http://0.0.0.0:8002'
 
 router = APIRouter()
 templates = Jinja2Templates(directory="app/templates")
+# ----------------------------------------------------------------------------------------------------------------------
 
 
 async def get_message(source, local_id, db: Session = Depends(dependencies.get_db)):

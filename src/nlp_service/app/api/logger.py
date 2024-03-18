@@ -4,7 +4,7 @@ from colorlog import ColoredFormatter
 
 # Настройки цветов для уровней логирования
 formatter = ColoredFormatter(
-    "%(log_color)s%(levelname)s%(reset)s:     [%(name)s] %(message)s",
+    "%(log_color)s%(levelname)-9s%(reset)s %(message)s",
     datefmt=None,
     reset=True,
     log_colors={

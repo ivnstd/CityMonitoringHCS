@@ -12,7 +12,6 @@ from api.logger import logger
 
 app = FastAPI()
 models.Base.metadata.create_all(bind=database.engine)
-
 # ----------------------------------------------------------------------------------------------------------------------
 
 
@@ -29,13 +28,12 @@ async def startup_event():
 @app.on_event("shutdown")
 async def shutdown_event():
     logger.info(f"Server shutdown : {datetime.now()}")
-
+# ----------------------------------------------------------------------------------------------------------------------
 
 
 # Директория статических файлов
 app.mount("/static", StaticFiles(directory="app/static"), name="static")
 
-# ----------------------------------------------------------------------------------------------------------------------
 app.include_router(messages_router)
 app.include_router(processing_router)
 app.include_router(map_router)
