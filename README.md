@@ -2,13 +2,12 @@
 
 City Monitoring of Housing and Communal Systems
 
-### Build
+### Build & Run
 ```commandline
-rye sync
-source .venv/bin/activate
+docker-compose up --build
 ```
 
-### Run
+### Shutdown
 ```commandline
-./run.sh
+docker-compose down 
 ```
