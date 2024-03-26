@@ -67,37 +67,21 @@ def parse_message(message):
 # ----------------------------------------------------------------------------------------------------------------------
 
 
-async def get_processing_message(text: str):
+async def get_processing_message(text, source):
     async with httpx.AsyncClient(timeout=httpx.Timeout(connect=10.0, read=300.0, write=100.0, pool=50.0)) as client:
-        url = f"{NLP_HOST}/processing"
-        params = {"message": text}
-        response = await client.get(url, params=params)
-        address_and_problem = response.json()
-    return address_and_problem
-
-
-async def get_geocoding_message(address: str):
-    async with httpx.AsyncClient(timeout=httpx.Timeout(connect=10.0, read=300.0, write=100.0, pool=50.0)) as client:
-        url = f"{NLP_HOST}/geocoding"
-        params = {"address": address}
-        response = await client.get(url, params=params)
-        address_and_coordinates = response.json()
-    return address_and_coordinates
-
-
-async def message_analysis(text, source):
-    address, problem, coordinates = None, None, None
-    if text:
         if source == "kvs":
             address = text
             problem = "Водоснабжение"
         else:
-            address, problem = await get_processing_message(text)
+            address = await client.get(f"{NLP_HOST}/processing/address", params={"message": text})
+            problem = await client.get(f"{NLP_HOST}/processing/problem", params={"message": text})
+            address = address.json()
+            problem = problem.json()
 
-        if all([address, problem]):
-            address, coordinates = await get_geocoding_message(address)
+        address_and_coordinates = await client.get(f"{NLP_HOST}/geocoding", params={"address": address})
+        address, coordinates = address_and_coordinates.json()
 
-    return address, problem, coordinates
+        return address, problem, coordinates
 # ----------------------------------------------------------------------------------------------------------------------
 
 
@@ -125,7 +109,7 @@ async def get_new_source_message_list(source: str, request: Request, db: Session
             if db_message or is_from_administration(message.from_user):
                 continue
 
-            address, problem, coordinates = await message_analysis(message.text, message.source)
+            address, problem, coordinates = await get_processing_message(message.text, message.source)
             if not all([address, problem, coordinates]):
                 continue
 
@@ -137,11 +121,7 @@ async def get_new_source_message_list(source: str, request: Request, db: Session
 
             # Создаем новую запись сообщения в базе данных
             db_message = models.Message(**dict(message))
-            # db_message = models.Message(**dict(message))
             db.add(db_message)
-            # db_message.address = address
-            # db_message.problem = problem
-            # db_message.coordinates = coordinates
             db.commit()
     return templates.TemplateResponse("message_list.html", {"request": request,
                                                             "source": source,

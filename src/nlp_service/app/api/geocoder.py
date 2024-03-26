@@ -13,6 +13,8 @@ CITY = "Саратов"
 
 async def geocoding(address):
     """ Геокодирование - получение координат объекта по его адресу """
+    if not address:
+        return None, None
 
     params = {
         "apikey": API_KEY,
@@ -21,19 +23,16 @@ async def geocoding(address):
         "format": "json"
     }
 
-    try:
-        # Отправка GET-запроса к API Yandex Maps
-        async with httpx.AsyncClient() as client:
-            response = await client.get(GEOCODE_ADDRESS_URL, params=params)
-            response.raise_for_status()  # Проверка на ошибки
+    # Отправка GET-запроса к API Yandex Maps
+    async with httpx.AsyncClient() as client:
+        response = await client.get(GEOCODE_ADDRESS_URL, params=params)
+        response.raise_for_status()  # Проверка на ошибки
 
-        # Получение координат из ответа
-        data = response.json()
-        feature_member = data["response"]["GeoObjectCollection"]["featureMember"][0]["GeoObject"]
-        coordinates = feature_member["Point"]["pos"]
-        full_address = feature_member["metaDataProperty"]["GeocoderMetaData"]["text"]
+    # Получение координат из ответа
+    data = response.json()
+    feature_member = data["response"]["GeoObjectCollection"]["featureMember"][0]["GeoObject"]
+    coordinates = feature_member["Point"]["pos"]
+    full_address = feature_member["metaDataProperty"]["GeocoderMetaData"]["text"]
 
-        # Возвращение адреса и координат
-        return full_address, coordinates
-    except Exception:
-        return None, None
+    # Возвращение адреса и координат
+    return full_address, coordinates

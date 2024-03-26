@@ -1,7 +1,7 @@
 from datetime import datetime
 from fastapi import FastAPI, Query
 
-from api.processing import processing
+from api.processing import get_address, get_problem
 from api.geocoder import geocoding
 from api.logger import logger
 
@@ -28,9 +28,14 @@ async def shutdown_event():
 # ----------------------------------------------------------------------------------------------------------------------
 
 
-@app.get("/processing")
-async def processing_message(message: str = Query(...)):
-    return processing(message)
+@app.get("/processing/address")
+async def processing_address(message: str = Query(...)):
+    return get_address(message)
+
+
+@app.get("/processing/problem")
+async def processing_problem(message: str = Query(...)):
+    return get_problem(message)
 
 
 @app.get("/geocoding")
