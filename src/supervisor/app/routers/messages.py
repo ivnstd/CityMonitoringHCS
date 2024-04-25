@@ -1,7 +1,7 @@
 import base64
 import io
 import httpx
-from fastapi import APIRouter, Request, Depends, HTTPException
+from fastapi import APIRouter, Request, Depends, HTTPException, Path
 from fastapi.responses import HTMLResponse, StreamingResponse
 from fastapi.templating import Jinja2Templates
 from sqlalchemy import func
@@ -11,23 +11,36 @@ from app.api import models, dependencies
 from app.api.scheme import MessageDB, MessagePlacemark
 from app.api.filters import is_from_administration, remove_duplicate_messages
 
-
 PARSER_HOST = 'http://0.0.0.0:8001'
 NLP_HOST = 'http://0.0.0.0:8002'
 
-
 router = APIRouter()
 templates = Jinja2Templates(directory="app/templates")
+
+
 # ----------------------------------------------------------------------------------------------------------------------
 
 
 async def get_last_message_id(source, db: Session = Depends(dependencies.get_db)):
     """ Определение идентификатора последнего полученного сообщения """
-    return (
+    message_id = (
         db.query(func.max(models.Message.local_id))
         .filter(models.Message.source == source)
         .scalar()
     )
+    if message_id:
+        return message_id
+
+
+async def get_first_message_id(source, db: Session = Depends(dependencies.get_db)):
+    """ Определение идентификатора первого полученного сообщения """
+    message_id = (
+        db.query(func.min(models.Message.local_id))
+        .filter(models.Message.source == source)
+        .scalar()
+    )
+    if message_id:
+        return message_id
 
 
 async def get_messages(source: str, db: Session = Depends(dependencies.get_db)):
@@ -64,6 +77,8 @@ def parse_message(message):
         text=message.get("text"),
         image=decode_image(message.get("image"))
     )
+
+
 # ----------------------------------------------------------------------------------------------------------------------
 
 
@@ -82,18 +97,31 @@ async def get_processing_message(text, source):
         address, coordinates = address_and_coordinates.json()
 
         return address, problem, coordinates
+
+
 # ----------------------------------------------------------------------------------------------------------------------
 
 
-@router.get("/messages/{source}/new/", response_class=HTMLResponse)
-async def get_new_source_message_list(source: str, request: Request, db: Session = Depends(dependencies.get_db)):
-    """ Получение еще новых сообщений, их запись в базу данных """
+@router.get("/messages/{source}/{is_new}/", response_class=HTMLResponse)
+async def get_new_source_message_list(
+        request: Request,
+        source: str,
+        is_new: str = Path(..., title="New or Old", regex="^(new|old)$"),
+        db: Session = Depends(dependencies.get_db)
+):
+    """ Получение новых сообщений, их запись в базу данных """
 
-    last_message_id = await get_last_message_id(source, db)
+    if is_new == "new":
+        last_message_id = await get_last_message_id(source, db)
+    else:
+        last_message_id = await get_first_message_id(source, db)
+    if not last_message_id:
+        last_message_id = 0
+
     meaningful_messages = []
 
     async with httpx.AsyncClient(timeout=httpx.Timeout(connect=10.0, read=300.0, write=100.0, pool=50.0)) as client:
-        url = f"{PARSER_HOST}/messages/{source}/new/"
+        url = f"{PARSER_HOST}/messages/{source}/{is_new}/"
         params = {"last_message_id": last_message_id}
         response = await client.get(url, params=params)
 
@@ -114,9 +142,9 @@ async def get_new_source_message_list(source: str, request: Request, db: Session
                 continue
 
             message = MessagePlacemark(**dict(message),
-                                              address=address,
-                                              problem=problem,
-                                              coordinates=coordinates)
+                                       address=address,
+                                       problem=problem,
+                                       coordinates=coordinates)
             meaningful_messages.append(message)
 
             # Создаем новую запись сообщения в базе данных

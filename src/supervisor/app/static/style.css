@@ -27,7 +27,7 @@ img {
 }
 
 /* Стили карточек */
-.card_1, .card_2, .card_3, .card_4, .card_all {
+.card_1, .card_2, .card_3, .card_4, .card_5, .card_all {
     position: relative;
     border-radius: 10px;
     height: 10%;
@@ -53,6 +53,10 @@ img {
     background-color: #4CEB66;
 }
 
+.card_5 {
+    background-color: #6A5ACD;
+}
+
 .card_all {
     background-color: #F8F8FF;
     height: 5%;
@@ -64,7 +68,7 @@ img {
 }
 
 /* При наведении на карточку - увеличение */
-.card_1:hover, .card_2:hover, .card_3:hover, .card_4:hover, .card_all:hover {
+.card_1:hover, .card_2:hover, .card_3:hover, .card_4:hover, .card_5:hover, .card_all:hover {
     transform: scale(1.05);
 }
 
