@@ -10,6 +10,7 @@ from .logger import logger
 SITE_URL = 'https://www.kvs-saratov.ru'
 START_URL = 'https://www.kvs-saratov.ru/news/operativnyy-monitoring/'
 PAGE_URL = 'https://www.kvs-saratov.ru/news/operativnyy-monitoring/18443?PAGEN_1='
+LAST_MESSAGE_ID = 32300
 
 
 async def fetch_html(url, client):
@@ -36,21 +37,24 @@ async def parse_page(url, last_message_id, client):
     messages_info_list = []
 
     for item in news_items:
-        id = int(item.find('a')['href'].split('/')[-2])
-        # Если сообщение новое, парсим его
-        if id > last_message_id:
-            location = item.find('h3').get_text('', True)
-            date_str = item.find('span').get_text()
-            date = datetime.strptime(date_str + " 00:00:00", "%d.%m.%Y %H:%M:%S")
-            messages_info_list.append(Message(
-                id=id,
-                source="kvs",
-                date=date,
-                from_user="ООО «Концессии водоснабжения — Саратов»",
-                text=location,
-                image=None
-            ))
-            logger.info(f"Сообщение KVS:{id}")
+        try:
+            id = int(item.find('a')['href'].split('/')[-2])
+            # Если сообщение новое, парсим его
+            if id > last_message_id:
+                location = item.find('h3').get_text('', True)
+                date_str = item.find('span').get_text()
+                date = datetime.strptime(date_str + " 00:00:00", "%d.%m.%Y %H:%M:%S")
+                messages_info_list.append(Message(
+                    id=id,
+                    source="kvs",
+                    date=date,
+                    from_user="ООО «Концессии водоснабжения — Саратов»",
+                    text=location,
+                    image=None
+                ))
+                logger.info(f"Сообщение KVS:{id}")
+        except Exception as e:
+            logger.error(f"Ошибка при чтении {item}: {e}")
 
     # Если все спаршенные сообщения были новыми, парсинг нужно продолжить
     is_parsing_continue = len(messages_info_list) == len(news_items)
@@ -73,10 +77,13 @@ async def async_range(start, stop):
         await asyncio.sleep(0)
 
 
-async def get_messages(last_message_id=32350):
+async def get_new_messages(last_message_id):
+    if last_message_id == 0:
+        last_message_id = LAST_MESSAGE_ID
+
     async with httpx.AsyncClient() as client:
         max_page_number = await get_last_page_number(START_URL, client)
-
+        print(max_page_number)
         messages = []
         async for page_number in async_range(1, max_page_number + 1):
             url = f'{PAGE_URL}{page_number}'
@@ -85,3 +92,20 @@ async def get_messages(last_message_id=32350):
             if not is_parsing_continue:
                 break
         return messages
+
+
+# async def get_old_messages(last_message_id):
+#     if last_message_id == 0:
+#         last_message_id = LAST_MESSAGE_ID
+#
+#     async with httpx.AsyncClient() as client:
+#         max_page_number = await get_last_page_number(START_URL, client)
+#         print(max_page_number)
+#         messages = []
+#         async for page_number in async_range(1, max_page_number + 1):
+#             url = f'{PAGE_URL}{page_number}'
+#             (messages_info_list, is_parsing_continue) = await parse_page(url, last_message_id, client)
+#             messages.extend(messages_info_list)
+#             if not is_parsing_continue:
+#                 break
+#         return messages

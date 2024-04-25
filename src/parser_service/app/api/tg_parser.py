@@ -16,6 +16,7 @@ CHAT = os.getenv("CHAT")
 SESSION_STRING = os.getenv("SESSION_STRING")
 
 DIR_PATH = "downloaded_images"
+LAST_MESSAGE_ID = 125800
 
 
 async def download_image(app, message):
@@ -42,15 +43,17 @@ async def process_message(app, message):
     user = message.from_user.first_name if message.from_user else message.sender_chat.title
 
     logger.info(f"Сообщение TG:{message.id}")
-
-    return Message(
-        id=message.id,
-        source="tg",
-        date=message.date,
-        from_user=user,
-        text=text,
-        image=downloaded_file_data
-    )
+    try:
+        return Message(
+            id=message.id,
+            source="tg",
+            date=message.date,
+            from_user=user,
+            text=text,
+            image=downloaded_file_data
+        )
+    except Exception:
+        return None
 
 
 async def get_limit(app, last_message_id):
@@ -68,17 +71,38 @@ async def get_limit(app, last_message_id):
     return limit
 
 
-async def get_messages(last_message_id=123400):
+async def get_old_messages(last_message_id):
     """ Парсинг новых сообщений """
+    if last_message_id == 0:
+        last_message_id = LAST_MESSAGE_ID
+
+    app = Client("CM_HCS_account", api_id=API_ID, api_hash=API_HASH, phone_number=SESSION, in_memory=True, session_string=SESSION_STRING)
+    async with app:
+        messages = []
+
+        async for message in app.get_chat_history(CHAT, limit=500, offset_id=last_message_id):
+            message_info = await process_message(app, message)
+            if message_info:
+                messages.append(message_info)
+
+        return messages
+
+
+async def get_new_messages(last_message_id):
+    """ Парсинг всех новых сообщений """
+    if last_message_id == 0:
+        last_message_id = LAST_MESSAGE_ID
+
     app = Client("CM_HCS_account", api_id=API_ID, api_hash=API_HASH, phone_number=SESSION, in_memory=True, session_string=SESSION_STRING)
     async with app:
         limit = await get_limit(app, last_message_id)
-
         messages = []
+
         if limit > 0:
             async for message in app.get_chat_history(CHAT, limit=limit):
                 message_info = await process_message(app, message)
-                messages.append(message_info)
+                if message_info:
+                    messages.append(message_info)
 
         return messages
 

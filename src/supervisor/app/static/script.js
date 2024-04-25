@@ -84,6 +84,8 @@ function getColorByProblem(problem) {
 			return '#EEA849';
 		case 'Дорожное хозяйство':
 			return '#4CEB66';
+		case 'Вывоз ТБО':
+			return '#6A5ACD';
 		default:
 			return '#808080';
 	}
