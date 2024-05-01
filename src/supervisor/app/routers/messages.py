@@ -153,7 +153,7 @@ async def get_new_source_message_list(
             db.commit()
     return templates.TemplateResponse("message_list.html", {"request": request,
                                                             "source": source,
-                                                            "category": "new",
+                                                            "category": is_new,
                                                             "messages": meaningful_messages})
 
 
