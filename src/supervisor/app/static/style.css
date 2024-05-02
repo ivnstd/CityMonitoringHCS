@@ -18,8 +18,8 @@
     font-family: sans-serif;
 }
 
-/* оформление картинок на карточках легенды */
-img {
+/* оформление картинок на карточках легенды*/
+.card_img {
     position: absolute;
     left: 5%;
     top: 10%;
@@ -96,4 +96,12 @@ p.card_all {
     margin-left: 0px;
     weight: 100%;
     white-space: nowrap;
+}
+
+a, a:visited {
+    display: block;
+    color: #999;
+    font-size: 12px;
+    line-height: 17px;
+    text-decoration: none !important;
 }

@@ -43,7 +43,8 @@ async def map(request: Request, db: Session = Depends(dependencies.get_db)):
             "problem": message.problem,
             "address": message.address,
             "coordinates": message.coordinates,
-            "image": image
+            "image": image,
+            "url": f"http://0.0.0.0:8000/messages/{message.source}/{message.local_id}"
         }
         filtered_messages.append(filtered_message)
 

@@ -58,14 +58,16 @@ function showMarkers(data = DATA) {
 
 		let image = ''
 		if (message.image) {
-			image = '<img src="' + message.image + '" height="400">';
+			image = '<div style="width: 200px; height: 108px; background-image: url(' +
+			message.image + '); background-size: cover;"></div>';
 		}
 
 		// Создание и добавление метки в кластер
 		clusterer.add(new ymaps.Placemark([longitude, latitude], {
-			balloonContentHeader: message.problem,
-			balloonContentBody: image + message.address,
-			balloonContentFooter: message.date
+			balloonContentHeader: '<b>' + message.problem + '</b>',
+			balloonContentBody: image + '<br/> ' + message.address,
+			balloonContentFooter: '<a href="' + message.url + '" target="_blank">' +
+			message.date + '</br>' + 'Перейти к жалобе </a>',
 		}, {
 			preset: 'islands#dotIcon',
 			iconColor: color
