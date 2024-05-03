@@ -40,7 +40,6 @@ async def parse_page(url, last_message_id, client, is_new, count=MESSAGE_COUNT):
         try:
             id = int(item.find('a')['href'].split('/')[-2])
             # Если сообщение новое, парсим его
-            logger.debug(f"{(not is_new and last_message_id - count <= id < last_message_id or is_new and last_message_id < id <= last_message_id + count)}")
             if (not is_new and last_message_id - count <= id < last_message_id or
                     is_new and last_message_id < id <= last_message_id + count):
 
