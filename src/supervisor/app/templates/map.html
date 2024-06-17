@@ -13,23 +13,23 @@
 		<div class="legend">
 			<h2> Жилищно-коммунальные проблемы Саратовской обл. </h2>
 			<button class="card_1" onclick="filterMarkers('Водоснабжение')">
-				<img src="/static/water_supply.png">
+				<img src="/static/water_supply.png" class="card_img">
 				<p> Водоснабжение </p>
 			</button>
 			<button class="card_2" onclick="filterMarkers('Теплоснабжение')">
-				<img src="/static/heat_supply.png">
+				<img src="/static/heat_supply.png" class="card_img">
 				<p> Теплоснабжение и горячее водоснабжение </p>
 			</button>
 			<button class="card_3" onclick="filterMarkers('Электроснабжение')">
-				<img src="/static/electricity_supply.png">
+				<img src="/static/electricity_supply.png" class="card_img">
 				<p> Электроснабжение </p>
 			</button>
 			<button class="card_4" onclick="filterMarkers('Дорожное хозяйство')">
-				<img src="/static/road_infrastructure.png">
+				<img src="/static/road_infrastructure.png" class="card_img">
 				<p> Дорожное хозяйство </p>
 			</button>
 			<button class="card_5" onclick="filterMarkers('Вывоз ТБО')">
-				<img src="/static/trash.png">
+				<img src="/static/trash.png" class="card_img">
 				<p> Вывоз ТБО </p>
 			</button>
 			<button class="card_all" onclick="showMarkers()">
@@ -37,8 +37,9 @@
 			</button>
 		</div>
 	</main>
-	<script src="https://api-maps.yandex.ru/2.1/?apikey=04115428-c44a-47da-8e64-57b42eaddda3&lang=ru_RU"></script>
-	<script src="/static/script.js"></script>
+    <script src="https://api-maps.yandex.ru/2.1/?lang=ru_RU&amp;apikey=04115428-c44a-47da-8e64-57b42eaddda3" type="text/javascript"></script>
+
+	<script src="/static/script.js" type="text/javascript"></script>
 	<script>
         const messages = {{ messages|tojson|safe }};
 		run_map(messages);

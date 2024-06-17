@@ -2,7 +2,7 @@ import base64
 import io
 import httpx
 from fastapi import APIRouter, Request, Depends, HTTPException, Path
-from fastapi.responses import HTMLResponse, StreamingResponse
+from fastapi.responses import HTMLResponse, StreamingResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
 from sqlalchemy import func
 from sqlalchemy.orm import Session
@@ -11,6 +11,7 @@ from app.api import models, dependencies
 from app.api.scheme import MessageDB, MessagePlacemark
 from app.api.filters import is_from_administration, remove_duplicate_messages
 
+MAIN_HOST = 'http://0.0.0.0:8000'
 PARSER_HOST = 'http://0.0.0.0:8001'
 NLP_HOST = 'http://0.0.0.0:8002'
 
@@ -120,7 +121,8 @@ async def get_new_source_message_list(
 
     meaningful_messages = []
 
-    async with httpx.AsyncClient(timeout=httpx.Timeout(connect=10.0, read=300.0, write=100.0, pool=50.0)) as client:
+    # async with httpx.AsyncClient(timeout=httpx.Timeout(connect=10.0, read=300.0, write=100.0, pool=50.0)) as client:
+    async with httpx.AsyncClient(timeout=httpx.Timeout(connect=None, read=None, write=None, pool=None)) as client:
         url = f"{PARSER_HOST}/messages/{source}/{is_new}/"
         params = {"last_message_id": last_message_id}
         response = await client.get(url, params=params)
@@ -153,7 +155,7 @@ async def get_new_source_message_list(
             db.commit()
     return templates.TemplateResponse("message_list.html", {"request": request,
                                                             "source": source,
-                                                            "category": "new",
+                                                            "category": is_new,
                                                             "messages": meaningful_messages})
 
 
@@ -196,3 +198,25 @@ async def get_message_image(source: str, local_id: int, db: Session = Depends(de
         return StreamingResponse(io.BytesIO(message.image), media_type="image/jpg")
     else:
         return HTMLResponse(content="Фото отсутствует")
+
+
+# ----------------------------------------------------------------------------------------------------------------------
+
+@router.get("/")
+async def update(is_new="old", db: Session = Depends(dependencies.get_db)):
+    is_database_empty = db.query(models.Message).count() == 0
+
+    # Если запуск происходит первый раз, подгружаем определенное количество старых сообщений со всех источников
+    if is_database_empty or is_new == "new":
+
+        source_list = ["tg", "kvs"]
+        url_list = [f"{MAIN_HOST}/messages/{source}/{is_new}/" for source in source_list]
+
+        async with httpx.AsyncClient(timeout=httpx.Timeout(connect=10.0, read=300.0, write=100.0, pool=50.0)) as client:
+            for url in url_list:
+                response = await client.get(url)
+
+            if response.status_code != 200:
+                return HTMLResponse(content="Не удалось получить сообщения", status_code=response.status_code)
+
+    return RedirectResponse("/map")
