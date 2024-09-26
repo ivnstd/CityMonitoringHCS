@@ -15,8 +15,8 @@ City Monitoring of Housing and Communal Systems
 - [Сервис для парсинга](src/parser_service/README.md)
 - [Сервис для обработки текста](src/nlp_service/README.md)
 
-![рис.1](src/supervisor/img/arch.png)
-![рис.2](src/supervisor/img/arch_2.png)
+![рис.1](img/arch.png)
+![рис.2](img/arch_2.png)
 
 ### Build & Run
 ```commandline
